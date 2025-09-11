@@ -1,4 +1,4 @@
-import geohash from './ngeohash';
+import geohash from 'ngeohash';
 
 export const geohashCoordinates = (
   longitude: number,
