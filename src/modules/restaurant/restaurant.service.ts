@@ -20,41 +20,32 @@ export class RestaurantService {
       maximumPrice,
       openNow,
       radiusKm = 5,
+      page = 1,
+      limit = 20,
     } = dto;
 
-    // convert raduis from kilometers to meters
     const radiusMeters = (radiusKm || 5) * 1000;
 
-    // object to nuild query
     const where: any = {};
-
-    if (cuisine) {
-      where.cuisine = cuisine;
-    }
-
+    if (cuisine) where.cuisine = cuisine;
     if (minimumPrice !== undefined || maximumPrice !== undefined) {
       where.price = {};
-      if (minimumPrice !== undefined) {
-        where.price.gte = minimumPrice;
-      }
-      if (maximumPrice !== undefined) {
-        where.price.lte = maximumPrice;
-      }
+      if (minimumPrice !== undefined) where.price.gte = minimumPrice;
+      if (maximumPrice !== undefined) where.price.lte = maximumPrice;
     }
+    if (openNow) where.isOpen = true;
 
-    if (openNow) {
-      where.open = true;
-    }
-
-    // ignore distance and fetch restaurants that meet query
+    // fetch restaurants with pagination
     const restaurants = await this.prisma.restaurant.findMany({
       where,
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
-    if (!latitude || !longitude) {
+    if (!latitude || !longitude)
       return { data: restaurants, message: 'Restaurants fetched successfully' };
-    }
 
+    // filter by distance
     const nearbyRestaurants = restaurants.filter((restaurant) =>
       isProximityMatch(longitude, latitude, restaurant.geohash, radiusMeters),
     );

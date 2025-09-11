@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsNotEmpty,
   IsNumber,
+  Min,
 } from 'class-validator';
 
 export class CreateRestaurantDto {
@@ -96,4 +97,16 @@ export class FindRestaurantDto {
   @IsOptional()
   @IsNumber()
   radiusKm?: number;
+
+  @ApiProperty({ required: false, default: 1 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiProperty({ required: false, default: 20 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  limit?: number = 20;
 }
