@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common';
 import * as dotenv from 'dotenv';
+import { AppModule } from './modules';
 
 dotenv.config();
 
@@ -50,9 +50,9 @@ async function bootstrap() {
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/v1/doc', app, document);
+    SwaggerModule.setup('api/v1/docs', app, document);
   }
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.NODE_PORT ?? 3000);
 }
 bootstrap();
