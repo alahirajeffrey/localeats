@@ -1,25 +1,69 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ApiResponse, geohashCoordinates } from 'src/common';
+import { ApiResponse, geohashCoordinates, isProximityMatch } from 'src/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateRestaurantDto, UpdateRestaurantDto } from './restaurant.dto';
+import {
+  CreateRestaurantDto,
+  FindRestaurantDto,
+  UpdateRestaurantDto,
+} from './restaurant.dto';
 
 @Injectable()
 export class RestaurantService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // async findRestaurants(dto: FindRestaurantDto): Promise<ApiResponse> {
-  //   const {
-  //     latitude,
-  //     longitude,
-  //     cuisine,
-  //     priceRange,
-  //     openNow,
-  //     radiusKm = 5,
-  //   } = dto;
+  async findRestaurants(dto: FindRestaurantDto) {
+    const {
+      latitude,
+      longitude,
+      cuisine,
+      minimumPrice,
+      maximumPrice,
+      openNow,
+      radiusKm = 5,
+    } = dto;
 
-  //   // convert raduis from kilometers to meters
-  //   const radiusMeters = radiusKm * 1000;
-  // }
+    // convert raduis from kilometers to meters
+    const radiusMeters = (radiusKm || 5) * 1000;
+
+    // object to nuild query
+    const where: any = {};
+
+    if (cuisine) {
+      where.cuisine = cuisine;
+    }
+
+    if (minimumPrice !== undefined || maximumPrice !== undefined) {
+      where.price = {};
+      if (minimumPrice !== undefined) {
+        where.price.gte = minimumPrice;
+      }
+      if (maximumPrice !== undefined) {
+        where.price.lte = maximumPrice;
+      }
+    }
+
+    if (openNow) {
+      where.open = true;
+    }
+
+    // ignore distance and fetch restaurants that meet query
+    const restaurants = await this.prisma.restaurant.findMany({
+      where,
+    });
+
+    if (!latitude || !longitude) {
+      return { data: restaurants, message: 'Restaurants fetched successfully' };
+    }
+
+    const nearbyRestaurants = restaurants.filter((restaurant) =>
+      isProximityMatch(longitude, latitude, restaurant.geohash, radiusMeters),
+    );
+
+    return {
+      data: nearbyRestaurants,
+      message: 'Restaurants fetched successfully',
+    };
+  }
 
   async fetchRestaurantById(restaurantId: string): Promise<ApiResponse> {
     const restaurant = await this.prisma.restaurant.findUnique({
@@ -38,9 +82,14 @@ export class RestaurantService {
 
     const restaurant = await this.prisma.restaurant.create({
       data: {
-        ...dto,
+        name: dto.name,
+        latitude: dto.latitude,
+        longitude: dto.longitude,
+        open: dto.open,
         geohash,
-        cuisine: { create: { name: dto.cuisine, price: dto.price } },
+        cuisine: {
+          create: { name: dto.cuisine.toLowerCase(), price: dto.price },
+        },
       },
     });
 
