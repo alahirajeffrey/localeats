@@ -15,14 +15,22 @@ datasource db {
 }
 
 model Restaurant {
-  id          String      @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
-  latitude    String
-  longitude   String
+  latitude    Float
+  longitude   Float
   geohash     String
-  geohash     String
-  cuisine     String
   open        Boolean
-  uploadedAt      DateTime            @default(now())
-  createdAt       DateTime    @default(now())
+  uploadedAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  cuisineId   String
+  cuisine     Cuisine  @relation(fields: [cuisineId], references: [id])
+}
+
+model Cuisine {
+  id     String   @id @default(uuid())
+  name   String
+  price  Int
+  restaurants Restaurant[]
 }
