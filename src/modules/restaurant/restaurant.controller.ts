@@ -6,9 +6,14 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
-import { CreateRestaurantDto, UpdateRestaurantDto } from './restaurant.dto';
+import {
+  CreateRestaurantDto,
+  FindRestaurantDto,
+  UpdateRestaurantDto,
+} from './restaurant.dto';
 import { ApiResponse } from 'src/common';
 
 @Controller('restaurants')
@@ -44,12 +49,8 @@ export class RestaurantController {
     return this.restaurantService.updateRestaurantDetails(restaurantId, dto);
   }
 
-  /*
-  @Get()
-  async findRestaurants(
-    @Query() dto: FindRestaurantDto,
-  ): Promise<ApiResponse> {
+  @Get('search')
+  async findRestaurants(@Query() dto: FindRestaurantDto) {
     return this.restaurantService.findRestaurants(dto);
   }
-  */
 }
