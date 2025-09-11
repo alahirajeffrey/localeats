@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { RestaurantModule } from './modules';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { RestaurantModule } from '../restaurant';
 
 @Module({
   imports: [
