@@ -20,6 +20,7 @@ model Restaurant {
   latitude    String
   longitude   String
   geohash     String
+  geohash     String
   cuisine     String
   open        Boolean
   uploadedAt      DateTime            @default(now())
