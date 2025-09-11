@@ -35,6 +35,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dotenv": "^17.2.2",
+    "haversine-distance": "^1.2.4",
     "helmet": "^8.1.0",
     "ngeohash": "^0.6.3",
     "prisma": "6.14.0",
