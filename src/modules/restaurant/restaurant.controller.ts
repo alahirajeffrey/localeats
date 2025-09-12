@@ -20,6 +20,11 @@ import { ApiResponse } from 'src/common';
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
+  @Get('search')
+  async findRestaurants(@Query() dto: FindRestaurantDto) {
+    return this.restaurantService.findRestaurants(dto);
+  }
+
   @Get(':restaurantId')
   async getRestaurantById(
     @Param('restaurantId') restaurantId: string,
@@ -47,10 +52,5 @@ export class RestaurantController {
     @Body() dto: UpdateRestaurantDto,
   ): Promise<ApiResponse> {
     return this.restaurantService.updateRestaurantDetails(restaurantId, dto);
-  }
-
-  @Get('search')
-  async findRestaurants(@Query() dto: FindRestaurantDto) {
-    return this.restaurantService.findRestaurants(dto);
   }
 }
