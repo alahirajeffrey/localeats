@@ -41,21 +41,27 @@ export class RestaurantService {
 
     if (openNow !== undefined) where.open = openNow;
 
-    // fetch retaurants with pagination
+    // if no location filtering, return all fetched restaurants
+    if (latitude === undefined || longitude === undefined) {
+      const restaurants = await this.prisma.restaurant.findMany({
+        where,
+        include: { cuisine: true },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+
+      return {
+        data: restaurants,
+        message: 'Restaurants fetched successfully',
+      };
+    }
+
     const restaurants = await this.prisma.restaurant.findMany({
       where,
       include: { cuisine: true },
       skip: (page - 1) * limit,
       take: limit,
     });
-
-    // Iif no location filtering, return all fetched restaurants
-    if (latitude === undefined || longitude === undefined) {
-      return {
-        data: restaurants,
-        message: 'Restaurants fetched successfully',
-      };
-    }
 
     // filter by distance using your geolocation utility
     const nearbyRestaurants = restaurants.filter((restaurant) =>
