@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ApiResponse, geohashCoordinates, isProximityMatch } from 'src/common';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/modules/prisma/prisma.service';
 import {
   CreateRestaurantDto,
   FindRestaurantDto,
@@ -24,28 +24,40 @@ export class RestaurantService {
       limit = 20,
     } = dto;
 
-    const radiusMeters = (radiusKm || 5) * 1000;
+    const radiusMeters = radiusKm * 1000;
 
+    // build filter query
     const where: any = {};
-    if (cuisine) where.cuisine = cuisine;
-    if (minimumPrice !== undefined || maximumPrice !== undefined) {
-      where.price = {};
-      if (minimumPrice !== undefined) where.price.gte = minimumPrice;
-      if (maximumPrice !== undefined) where.price.lte = maximumPrice;
-    }
-    if (openNow) where.isOpen = true;
 
-    // fetch restaurants with pagination
+    if (cuisine || minimumPrice !== undefined || maximumPrice !== undefined) {
+      where.cuisine = {};
+      if (cuisine) where.cuisine.name = cuisine.toLowerCase();
+      if (minimumPrice !== undefined || maximumPrice !== undefined) {
+        where.cuisine.price = {};
+        if (minimumPrice !== undefined) where.cuisine.price.gte = minimumPrice;
+        if (maximumPrice !== undefined) where.cuisine.price.lte = maximumPrice;
+      }
+    }
+
+    if (openNow !== undefined) where.open = openNow;
+
+    // fetch retaurants with pagination
     const restaurants = await this.prisma.restaurant.findMany({
       where,
+      include: { cuisine: true },
       skip: (page - 1) * limit,
       take: limit,
     });
 
-    if (!latitude || !longitude)
-      return { data: restaurants, message: 'Restaurants fetched successfully' };
+    // Iif no location filtering, return all fetched restaurants
+    if (latitude === undefined || longitude === undefined) {
+      return {
+        data: restaurants,
+        message: 'Restaurants fetched successfully',
+      };
+    }
 
-    // filter by distance
+    // filter by distance using your geolocation utility
     const nearbyRestaurants = restaurants.filter((restaurant) =>
       isProximityMatch(longitude, latitude, restaurant.geohash, radiusMeters),
     );
@@ -79,12 +91,18 @@ export class RestaurantService {
         open: dto.open,
         geohash,
         cuisine: {
-          create: { name: dto.cuisine.toLowerCase(), price: dto.price },
+          create: { name: dto.cuisine, price: dto.price },
         },
+      },
+      include: {
+        cuisine: true,
       },
     });
 
-    return { message: 'Restaurant created successfully', data: restaurant };
+    return {
+      message: 'Restaurant created successfully',
+      data: restaurant,
+    };
   }
 
   async deleteRestaurant(restaurantId: string): Promise<ApiResponse> {
