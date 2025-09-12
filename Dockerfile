@@ -24,6 +24,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/.env ./.env
 
 # is this necessary
-RUN npx prisma generate  
+RUN npx prisma generate 
+RUN npx prisma db seed 
 
 CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
