@@ -23,18 +23,15 @@ export const geohashCoordinates = (
  * @returns boolean
  */
 export const isProximityMatch = (
-  longitude: number,
-  latitude: number,
+  userLongitude: number,
+  userLatitude: number,
   restaurantGeohash: string,
   distanceInMetres: number,
 ): boolean => {
-  const [decodedLat, decodedLon] = geohash.decode(restaurantGeohash) as [
-    number,
-    number,
-  ];
+  const { latitude, longitude } = geohash.decode(restaurantGeohash);
 
-  const userLocation = { lat: latitude, lon: longitude };
-  const restaurantLocation = { lat: decodedLat, lon: decodedLon };
+  const userLocation = { lat: userLatitude, lon: userLongitude };
+  const restaurantLocation = { lat: latitude, lon: longitude };
 
   const dist = haversine(userLocation, restaurantLocation);
 
