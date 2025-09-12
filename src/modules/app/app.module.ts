@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { RestaurantModule } from '../restaurant';
+import { PrismaModule } from '../prisma';
 
 @Module({
   imports: [
     RestaurantModule,
+    PrismaModule,
     // rate limiter i.e 10 requests every 60 seconds
     ThrottlerModule.forRoot([
       {
