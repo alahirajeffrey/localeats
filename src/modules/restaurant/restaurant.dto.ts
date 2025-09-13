@@ -7,6 +7,7 @@ import {
   IsNumber,
   Min,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateRestaurantDto {
   @ApiProperty()
@@ -63,50 +64,58 @@ export class UpdateRestaurantDto {
 }
 
 export class FindRestaurantDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
-  latitude: number;
+  @Type(() => Number)
+  latitude?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
-  longitude: number;
+  @Type(() => Number)
+  longitude?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   cuisine?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   minimumPrice?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   maximumPrice?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
+  @Type(() => Boolean)
   openNow?: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   radiusKm?: number;
 
   @ApiProperty({ required: false, default: 1 })
   @IsOptional()
   @IsNumber()
   @Min(1)
+  @Type(() => Number)
   page?: number = 1;
 
   @ApiProperty({ required: false, default: 20 })
   @IsOptional()
   @IsNumber()
   @Min(1)
+  @Type(() => Number)
   limit?: number = 20;
 }
