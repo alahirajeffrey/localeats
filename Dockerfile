@@ -29,4 +29,4 @@ RUN npx prisma generate
 
 EXPOSE 8172 
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/prisma/seed.js && node dist/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/prisma/seed.js && node dist/src/main.js"]
