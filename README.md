@@ -19,3 +19,8 @@ Kenkepua Senior Software Engineer Take Home Assessment
 - run the command `docker-compose up --build -d` to setup docker compose
 - run the command `docker ps` to verify the containers are running
 - visit `http://localhost:8172/api/v1/docs` to visit the swagger doc
+
+## Location to test manually
+
+Latitude: 40.748817
+Longitude: -73.985428
