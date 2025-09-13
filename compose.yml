@@ -17,7 +17,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nest-server
+    container_name: localeats
     restart: always
     depends_on:
       - postgres
