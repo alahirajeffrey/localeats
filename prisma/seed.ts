@@ -25,38 +25,31 @@ async function main() {
   const restaurantsData = [
     {
       name: 'Pasta Palace',
-      latitude: 41.9028,
-      longitude: 12.4964,
+      latitude: 40.73061,
+      longitude: -73.935242,
       open: true,
       cuisine: 'Italian',
     },
     {
       name: 'Sushi World',
-      latitude: 35.6895,
-      longitude: 139.6917,
+      latitude: 40.764356,
+      longitude: -73.923462,
       open: true,
       cuisine: 'Japanese',
     },
     {
       name: 'Taco Haven',
-      latitude: 19.4326,
-      longitude: -99.1332,
+      latitude: 40.678178,
+      longitude: -73.944158,
       open: false,
       cuisine: 'Mexican',
     },
     {
       name: 'Curry Corner',
-      latitude: 28.6139,
-      longitude: 77.209,
+      latitude: 40.789142,
+      longitude: -74.05653,
       open: true,
       cuisine: 'Indian',
-    },
-    {
-      name: 'Le Petit Bistro',
-      latitude: 48.8566,
-      longitude: 2.3522,
-      open: true,
-      cuisine: 'French',
     },
   ];
 
